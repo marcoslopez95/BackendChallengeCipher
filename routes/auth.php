@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\Currency\CurrencyController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -35,6 +36,7 @@ Route::middleware('guest')->group(function () {
                 ->name('password.store');
 });
 
+###################         Auth             #######################
 Route::middleware('auth')->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)
                 ->name('verification.notice');
@@ -56,4 +58,6 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
                 ->name('logout');
+
+    Route::resource('currencies',CurrencyController::class);
 });
