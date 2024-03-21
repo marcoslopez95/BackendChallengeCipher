@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('taxes', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->float('fixed');
+            $table->float('percentage');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -23,14 +23,14 @@ class CurrencyRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'name' => 'required|string',
+            'name' => 'required|string|unique:currencies,name',
             'abbreviation' => 'required|string',
             'symbol' => 'required|string',
             'exchange' => 'required|numeric|min:0',
             'principal' => 'required|boolean',
         ];
         if($this->isMethod('PUT')){
-            $rules['name'] = '|unique:currencies,name,'.$this->currency->id;
+            $rules['name'] .= ','.$this->currency->id;
         }
         return $rules;
     }

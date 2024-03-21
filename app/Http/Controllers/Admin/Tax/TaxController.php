@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin\Tax;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\TaxRequest;
 use App\Models\Tax;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -25,23 +27,38 @@ class TaxController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Admin/Tax/TaxShow');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(TaxRequest $request)
     {
-        //
+        try{
+            $tax = Tax::create($request->only([
+                'name',
+                'fixed',
+                'percentage',
+            ]));
+
+            return to_route('taxes.index');
+        }catch(Exception $e){
+            return back()->withErrors([
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Tax $tax)
     {
-        //
+        return Inertia::render('Admin/Tax/TaxShow', [
+            'tax' => $tax
+        ]);
+
     }
 
     /**
@@ -55,16 +72,34 @@ class TaxController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(TaxRequest $request, Tax $tax)
     {
-        //
+        try{
+            $tax->update($request->only([
+                'name',
+                'fixed',
+                'percentage',
+            ]));
+
+            return to_route('taxes.index');
+        }catch(Exception $e){
+            return back()->withErrors([
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $currency)
     {
-        //
+        $tax = Tax::withTrashed()->find($currency);
+
+        $tax->trashed()
+        ? $tax->restore()
+        : $tax->delete();
+
+        return response()->noContent();
     }
 }

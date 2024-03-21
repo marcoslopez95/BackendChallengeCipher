@@ -1,44 +1,39 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, useForm,router  } from "@inertiajs/vue3";
-import TableComponent from "../../Components/TableComponent.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import { redirecTo } from "@/helper.js";
-import { reactive } from "vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import Checkbox from "@/Components/Checkbox.vue";
-import { ref } from "vue";
 
 const props = defineProps({
-    currency: {
+    tax: {
         type: Object,
         default: () => {},
     },
 });
 
 const form = useForm({
-    name: props.currency?.name ?? '',
-    symbol: props.currency?.symbol ?? '',
-    principal: !!props.currency?.principal ?? false,
-    abbreviation: props.currency?.abbreviation ?? '',
-    exchange: props.currency?.exchange?.toString() ?? '',
+    name: props.tax?.name ?? '',
+    fixed: props.tax?.fixed ?? '',
+    percentage: props.tax?.percentage ?? '',
 });
 
 const back = () => {
-    redirecTo(route("currencies.index"));
+    redirecTo(route("taxes.index"));
 };
 
 const submit =() =>{
-    if(props.currency?.id){
-        router.put(route('currencies.update',{
-            currency: props.currency.id
+    if(props.tax?.id){
+        router.put(route('taxes.update',{
+            tax: props.tax.id
         }), form)
     }else
-    if(!props.currency?.id){
-        router.post(route('currencies.store',), form)
+    if(!props.tax?.id){
+        router.post(route('taxes.store',), form)
     }
 }
 </script>
@@ -50,7 +45,7 @@ const submit =() =>{
         <template #header>
             <div class="flex justify-between">
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                    Monedas
+                    Impuestos
                 </h2>
                 <div>
                     <SecondaryButton @click="back"> Atrás </SecondaryButton>
@@ -86,65 +81,35 @@ const submit =() =>{
                                     />
                                 </div>
                                 <div class="">
-                                    <InputLabel for="abbreviation" value="Abreviación" />
+                                    <InputLabel for="fixed" value="Tasa Fija" />
 
                                     <TextInput
-                                        id="abbreviation"
-                                        type="text"
-                                        class="mt-1 block"
-                                        v-model="form.abbreviation"
-                                        required
-                                    />
-
-                                    <InputError
-                                        class="mt-2"
-                                        :message="form.errors.abbreviation"
-                                    />
-                                </div>
-                                <div>
-                                    <InputLabel for="symbol" value="Símbolo" />
-
-                                    <TextInput
-                                        id="symbol"
-                                        type="text"
-                                        class="mt-1 block"
-                                        v-model="form.symbol"
-                                        required
-                                    />
-
-                                    <InputError
-                                        class="mt-2"
-                                        :message="form.errors.name"
-                                    />
-                                </div>
-                                <div>
-                                    <InputLabel for="exchange" value="Tasa Cambio" />
-
-                                    <TextInput
-                                        id="exchange"
+                                        id="fixed"
                                         type="number"
                                         class="mt-1 block"
-                                        v-model="form.exchange"
+                                        v-model="form.fixed"
                                         required
                                     />
 
                                     <InputError
                                         class="mt-2"
-                                        :message="form.errors.exchange"
+                                        :message="form.errors.fixed"
                                     />
                                 </div>
                                 <div>
-                                    <InputLabel for="principal" value="Principal" />
+                                    <InputLabel for="percentage" value="Tasa %" />
 
-                                    <Checkbox
-                                        id="principal"
-                                        :checked="form.principal"
-                                        @update:checked="(v)=>form.principal = v"
+                                    <TextInput
+                                        id="percentage"
+                                        type="number"
+                                        class="mt-1 block"
+                                        v-model="form.percentage"
+                                        required
                                     />
 
                                     <InputError
                                         class="mt-2"
-                                        :message="form.errors.exchange"
+                                        :message="form.errors.percentage"
                                     />
                                 </div>
                                 <div class="col-span-3 text-right">

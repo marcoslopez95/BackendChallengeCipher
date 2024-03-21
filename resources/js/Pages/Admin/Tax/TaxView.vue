@@ -7,7 +7,7 @@ import {redirecTo} from '@/helper.js'
 import axios from 'axios'
 
 const props = defineProps({
-    currencies: {
+    taxes: {
         type: Array,
         default: () => []
     }
@@ -19,35 +19,27 @@ const headers = [
         value: 'id'
     },
     {
-        title: 'nombre',
+        title: 'Nombre',
         value: 'name'
     },
     {
-        title: 'abreviación',
-        value: 'abbreviation'
+        title: 'Tasa Fija',
+        value: 'fixed'
     },
     {
-        title: 'símbolo',
-        value: 'symbol'
-    },
-    {
-        title: 'Tasa Cambio',
-        value: 'exchange'
-    },
-    {
-        title: 'Principal',
-        value: 'principal'
+        title: 'Tasa %',
+        value: 'percentage'
     },
 ]
 
-const edit = (currency) => {
-    redirecTo(route('currencies.show',{ currency: currency.id }))
+const edit = (tax) => {
+    redirecTo(route('taxes.show',{ tax: tax.id }))
 }
 
-const create = () => redirecTo(route('currencies.create'))
+const create = () => redirecTo(route('taxes.create'))
 
 const destroy = async(item) => {
-    const url = route('currencies.destroy',{ currency: item.id })
+    const url = route('taxes.destroy',{ tax: item.id })
     console.log(url)
     try{
         const response = await axios.delete(url)
@@ -65,7 +57,9 @@ const destroy = async(item) => {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex justify-between">
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">Monedas</h2>
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    Impuestos
+                </h2>
                 <div>
                     <primary-button @click="create">
                         Crear
@@ -79,21 +73,12 @@ const destroy = async(item) => {
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <table-component
                         :headers="headers"
-                        :items="currencies"
+                        :items="taxes"
                         withActions
                         @clickInEdit="edit"
                         @clickInDelete="destroy"
                         >
-                        <template #cel-principal="{ item }">
-                            <div class="w-full flex justify-center " >
-                                <div class="w-10 rounded-lg mx-center"
-                                    :class="[
-                                        item.principal ? 'bg-green-400' : 'bg-red-400'
-                                    ]">
-                                    {{ item.principal ? 'Sí' : 'No' }}
-                                </div>
-                            </div>
-                        </template>
+
                     </table-component>
                 </div>
             </div>

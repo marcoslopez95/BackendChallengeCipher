@@ -20,8 +20,8 @@ class Tax extends Model
     protected function casts():array
     {
         return [
-            'fixed' => 'numeric',
-            'percentage' => 'numeric',
+            'fixed' => 'int',
+            'percentage' => 'int',
         ];
     }
 }

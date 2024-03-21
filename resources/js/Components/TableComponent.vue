@@ -29,6 +29,7 @@
                         class="flex justify-center gap-3"
                     >
                         <i
+                            v-if="!item.deleted_at"
                             title="Editar"
                             class="cursor-pointer"
                             @click="clickInEdit(item)"
@@ -36,11 +37,14 @@
                             <EditIcon />
                         </i>
                         <i
-                            title="Editar"
+                            :title="!item.deleted_at ?'Eliminar' :'Restaurar'"
                             class="cursor-pointer"
                             @click="clickInDelete(item)"
                         >
-                            <DeleteIcon />
+                            <DeleteIcon
+                                v-if="!item.deleted_at"
+                            />
+                            <RestoreIcon v-else/>
                         </i>
                         <slot name="newButtons" :item="item"> </slot>
                     </div>
@@ -72,14 +76,14 @@
                         />
                     </svg>
                 </div>
-                Eliminar
+               {{ !item.deleted_at ? 'Eliminar' : 'Restaurar' }}
             </div>
             <div class="text-center text-lg">
-                ¿Seguro de eliminar este registro?
+                ¿Seguro de {{ !item.deleted_at ? 'eliminar' : 'restaurar' }} este registro?
             </div>
             <div class="my-4 flex justify-center gap-4">
                 <primary-button
-                    @click="confirmDelete(item)"
+                    @click="confirmDelete"
                     class="bg-red-500 hover:bg-red-700 focus:bg-red-600 active:bg-red-600 focus:ring-red-500"
                 >
                     Sí
@@ -93,6 +97,7 @@
 <script setup>
 import { toRefs, ref } from "vue";
 import EditIcon from "@/Icons/EditIcon.vue";
+import RestoreIcon from "@/Icons/RestoreIcon.vue";
 import DeleteIcon from "@/Icons/DeleteIcon.vue";
 import Modal from "@/Components/Modal.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";

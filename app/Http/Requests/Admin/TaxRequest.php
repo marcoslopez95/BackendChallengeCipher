@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Models\Role;
 use Illuminate\Foundation\Http\FormRequest;
 
 class TaxRequest extends FormRequest
@@ -11,7 +12,8 @@ class TaxRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return !!auth()->user()->roles->where('id',Role::ADMIN)->first();
+
     }
 
     /**
@@ -21,8 +23,15 @@ class TaxRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
+        $rules = [
+            'name' => 'required|string|unique:taxes,name',
+            'fixed' => 'required|numeric|min:0',
+            'percentage' => 'required|numeric|between:0,100',
         ];
+
+        if($this->isMethod('PUT')){
+            $rules['name'] .= ',' . $this->tax->id;
+        }
+        return $rules;
     }
 }
