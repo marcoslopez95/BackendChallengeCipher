@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import TableComponent from '../../Components/TableComponent.vue';
+import TableComponent from '@/Components/TableComponent.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue'
 import {redirecTo} from '@/helper.js'
 import axios from 'axios'
