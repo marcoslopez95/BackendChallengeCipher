@@ -33,7 +33,7 @@ const headers = [
 ];
 
 const edit = (product) => {
-    redirecTo(route("products.show", { product: product.id }));
+    redirecTo(route("products.edit", { product: product.id }));
 };
 
 const create = () => redirecTo(route("products.create"));

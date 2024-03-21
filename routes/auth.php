@@ -63,5 +63,12 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('currencies',CurrencyController::class);
     Route::resource('taxes',TaxController::class);
-    Route::resource('products',ProductController::class);
+
+    Route::get('products/{product}/add-shopping-cart',[ProductController::class, 'addShoppingCart'])
+        ->name('products.add-shopping-cart');
+    Route::resource('products',ProductController::class)
+        ->withoutMiddleware([
+            'show' => 'auth'
+        ]);
+
 });

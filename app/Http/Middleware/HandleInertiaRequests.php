@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
 
@@ -39,6 +40,11 @@ class HandleInertiaRequests extends Middleware
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
+            'shoppingCart' => Session::get('ShoppingCart',[]),
+            'currencyPrincipal' => \App\Models\Currency::getPrincipalCurrency(),
+            // 'flash' => [
+            //     'notification' => $request->session()->get('notification','')
+            // ],
         ];
     }
 }

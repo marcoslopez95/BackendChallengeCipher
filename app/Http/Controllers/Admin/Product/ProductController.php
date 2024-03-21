@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Admin\Product;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ProductRequest;
+use App\Models\Currency;
 use App\Models\Product;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 
 class ProductController extends Controller
@@ -64,17 +66,30 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         $product->load('image');
+        $currency = Currency::getPrincipalCurrency();
         return Inertia::render('Admin/Product/ProductShow',[
-            'product' => $product
+            'product' => $product,
+            'currency' => $currency,
+            'canLogin' => \Illuminate\Support\Facades\Route::has('login'),
+            'canRegister' => \Illuminate\Support\Facades\Route::has('register'),
+            'laravelVersion' => \Illuminate\Foundation\Application::VERSION,
+            'phpVersion' => PHP_VERSION,
+        ])->with([
+            'notification' => Session::get('notification'),
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Product $product)
     {
-        //
+        $product->load('image');
+        $currency = Currency::getPrincipalCurrency();
+        return Inertia::render('Admin/Product/ProductEdit',[
+            'product' => $product,
+            'currency' => $currency,
+        ]);
     }
 
     /**
@@ -131,5 +146,31 @@ class ProductController extends Controller
                 'error' => $e->getMessage(),
             ]);
         }
+    }
+
+    public function addShoppingCart(Product $product, Request $request)
+    {
+        $data = collect(Session::get('ShoppingCart',[]));
+        $productInShoppingCart = $data->firstWhere('product_id', $product->id);
+        if(!$productInShoppingCart){
+            $productInShoppingCart = [
+                'product' => $product->only('name','id','price'),
+                'quantity'   => 1
+            ];
+            $newData = $data->push((array) $productInShoppingCart)->toArray();
+        }else{
+            $productInShoppingCart['quantity'] += $request->quantyty ?? 1;
+            $newData = $data->whereNotIn('product_id', [$product->id])
+                        ->push($productInShoppingCart)
+                        ->toArray();
+        }
+        Session::put('ShoppingCart',$newData);
+        Session::flash('notification',[
+            'type' => 'success',
+            'message' => 'Añadido exitosamente'
+        ]);
+        // dd($product);
+
+        return back();
     }
 }

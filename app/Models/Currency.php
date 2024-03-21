@@ -60,4 +60,9 @@ class Currency extends Model
             $verifiedExistPrincipal($currency);
         });
     }
+
+    public static function getPrincipalCurrency():Currency
+    {
+        return self::where('principal',true)->first();
+    }
 }
