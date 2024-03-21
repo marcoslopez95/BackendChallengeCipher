@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\Currency\CurrencyController;
+use App\Http\Controllers\Admin\Product\ProductController;
+use App\Http\Controllers\Admin\Tax\TaxController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -35,6 +38,7 @@ Route::middleware('guest')->group(function () {
                 ->name('password.store');
 });
 
+###################         Auth             #######################
 Route::middleware('auth')->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)
                 ->name('verification.notice');
@@ -56,4 +60,15 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
                 ->name('logout');
+
+    Route::resource('currencies',CurrencyController::class);
+    Route::resource('taxes',TaxController::class);
+
+    Route::get('products/{product}/add-shopping-cart',[ProductController::class, 'addShoppingCart'])
+        ->name('products.add-shopping-cart');
+    Route::resource('products',ProductController::class)
+        ->withoutMiddleware([
+            'show' => 'auth'
+        ]);
+
 });
