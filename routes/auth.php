@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\Currency\CurrencyController;
+use App\Http\Controllers\Admin\Product\ProductController;
 use App\Http\Controllers\Admin\Tax\TaxController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
@@ -62,4 +63,5 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('currencies',CurrencyController::class);
     Route::resource('taxes',TaxController::class);
+    Route::resource('products',ProductController::class);
 });

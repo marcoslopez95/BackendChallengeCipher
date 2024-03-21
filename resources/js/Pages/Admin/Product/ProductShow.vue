@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, useForm,router  } from "@inertiajs/vue3";
+import { Head, useForm, router } from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import { redirecTo } from "@/helper.js";
@@ -10,36 +10,35 @@ import InputLabel from "@/Components/InputLabel.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 
 const props = defineProps({
-    currency: {
+    product: {
         type: Object,
         default: () => {},
     },
     errors: Object
-
 });
 
 const form = useForm({
-    name: props.currency?.name ?? '',
-    symbol: props.currency?.symbol ?? '',
-    principal: !!props.currency?.principal ?? false,
-    abbreviation: props.currency?.abbreviation ?? '',
-    exchange: props.currency?.exchange?.toString() ?? '',
+    name: props.product?.name ?? "",
+    cost: props.product?.cost ?? "",
+    price: props.product?.price ?? '',
 });
 
 const back = () => {
-    redirecTo(route("currencies.index"));
+    redirecTo(route("products.index"));
 };
 
-const submit =() =>{
-    if(props.currency?.id){
-        router.put(route('currencies.update',{
-            currency: props.currency.id
-        }), form)
-    }else
-    if(!props.currency?.id){
-        router.post(route('currencies.store',), form)
+const submit = () => {
+    if (!props.product?.id) {
+        router.post(route("products.store"), form);
+        return;
     }
-}
+    router.put(
+        route("products.update", {
+            product: props.product.id,
+        }),
+        form
+    );
+};
 </script>
 
 <template>
@@ -49,7 +48,7 @@ const submit =() =>{
         <template #header>
             <div class="flex justify-between">
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                    Monedas
+                    Productos
                 </h2>
                 <div>
                     <SecondaryButton @click="back"> Atrás </SecondaryButton>
@@ -85,73 +84,49 @@ const submit =() =>{
                                     />
                                 </div>
                                 <div class="">
-                                    <InputLabel for="abbreviation" value="Abreviación" />
+                                    <InputLabel
+                                        for="cost"
+                                        value="Precio Costo"
+                                    />
 
                                     <TextInput
-                                        id="abbreviation"
-                                        type="text"
-                                        class="mt-1 block"
-                                        v-model="form.abbreviation"
-                                        required
-                                    />
-
-                                    <InputError
-                                        class="mt-2"
-                                        :message="errors.abbreviation"
-                                    />
-                                </div>
-                                <div>
-                                    <InputLabel for="symbol" value="Símbolo" />
-
-                                    <TextInput
-                                        id="symbol"
-                                        type="text"
-                                        class="mt-1 block"
-                                        v-model="form.symbol"
-                                        required
-                                    />
-
-                                    <InputError
-                                        class="mt-2"
-                                        :message="errors.name"
-                                    />
-                                </div>
-                                <div>
-                                    <InputLabel for="exchange" value="Tasa Cambio" />
-
-                                    <TextInput
-                                        id="exchange"
+                                        id="cost"
                                         type="number"
                                         class="mt-1 block"
-                                        v-model="form.exchange"
-                                        min="0"
+                                        v-model="form.cost"
                                         step="0.01"
+                                        min="0"
                                         required
                                     />
 
                                     <InputError
                                         class="mt-2"
-                                        :message="errors.exchange"
+                                        :message="errors.cost"
                                     />
                                 </div>
                                 <div>
-                                    <InputLabel for="principal" value="Principal" />
+                                    <InputLabel
+                                        for="price"
+                                        value="Precio Venta"
+                                    />
 
-                                    <Checkbox
-                                        id="principal"
-                                        :checked="form.principal"
-                                        @update:checked="(v)=>form.principal = v"
+                                    <TextInput
+                                        id="price"
+                                        type="number"
+                                        class="mt-1 block"
+                                        v-model="form.price"
+                                        required
+                                        step="0.01"
+                                        min="0"
                                     />
 
                                     <InputError
                                         class="mt-2"
-                                        :message="errors.exchange"
+                                        :message="errors.price"
                                     />
                                 </div>
                                 <div class="col-span-3 text-right">
-                                    <primary-button>
-                                        Guardar
-                                    </primary-button>
+                                    <primary-button> Guardar </primary-button>
                                 </div>
                             </div>
                         </form>

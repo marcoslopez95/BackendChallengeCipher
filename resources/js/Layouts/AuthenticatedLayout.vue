@@ -32,6 +32,13 @@ const links = [
             ROLES.ADMIN
         ],
     },
+    {
+        title: "Productos",
+        route_name: "products.index",
+        role: [
+            ROLES.ADMIN
+        ],
+    },
 ];
 
 const page = usePage();

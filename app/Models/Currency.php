@@ -23,7 +23,7 @@ class Currency extends Model
     {
         return [
             'principal' => 'boolean',
-            'exchange'  => 'int',
+            'exchange'  => 'decimal:2',
         ];
     }
 

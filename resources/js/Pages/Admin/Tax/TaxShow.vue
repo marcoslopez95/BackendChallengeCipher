@@ -14,6 +14,8 @@ const props = defineProps({
         type: Object,
         default: () => {},
     },
+    errors: Object
+
 });
 
 const form = useForm({
@@ -77,7 +79,7 @@ const submit =() =>{
 
                                     <InputError
                                         class="mt-2"
-                                        :message="form.errors.name"
+                                        :message="errors.name"
                                     />
                                 </div>
                                 <div class="">
@@ -88,12 +90,14 @@ const submit =() =>{
                                         type="number"
                                         class="mt-1 block"
                                         v-model="form.fixed"
+                                        min="0"
+                                        step="0.01"
                                         required
                                     />
 
                                     <InputError
                                         class="mt-2"
-                                        :message="form.errors.fixed"
+                                        :message="errors.fixed"
                                     />
                                 </div>
                                 <div>
@@ -104,12 +108,15 @@ const submit =() =>{
                                         type="number"
                                         class="mt-1 block"
                                         v-model="form.percentage"
+                                        step="0.01"
+                                        max="100"
+                                        min="0"
                                         required
                                     />
 
                                     <InputError
                                         class="mt-2"
-                                        :message="form.errors.percentage"
+                                        :message="errors.percentage"
                                     />
                                 </div>
                                 <div class="col-span-3 text-right">

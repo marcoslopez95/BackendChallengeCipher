@@ -6,22 +6,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Tax extends Model
+class Product extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
     protected $fillable = [
-        'fixed',
-        'percentage',
         'name',
+        'cost',
+        'price',
     ];
 
     protected function casts():array
     {
         return [
-            'fixed' => 'decimal:2',
-            'percentage' => 'decimal:2',
+            'cost' => 'decimal:2',
+            'price' => 'decimal:2',
         ];
     }
 }
