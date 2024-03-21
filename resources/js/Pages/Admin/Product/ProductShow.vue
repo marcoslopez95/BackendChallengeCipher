@@ -4,7 +4,6 @@ import { redirecTo } from "@/helper";
 import { ref } from "vue";
 import PrincipalLayout from '@/Layouts/PrincipalLayout.vue'
 
-
 const props = defineProps({
     canLogin: {
         type: Boolean,

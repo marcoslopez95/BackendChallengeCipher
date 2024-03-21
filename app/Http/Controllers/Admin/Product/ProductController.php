@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ProductRequest;
 use App\Models\Currency;
 use App\Models\Product;
+use App\Models\Tax;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +31,10 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Admin/Product/ProductShow');
+        $taxes = Tax::all();
+        return Inertia::render('Admin/Product/ProductEdit',[
+            'taxes' => $taxes
+        ]);
     }
 
     /**
@@ -65,9 +69,11 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        $taxes = Tax::all();
         $product->load('image');
         $currency = Currency::getPrincipalCurrency();
         return Inertia::render('Admin/Product/ProductShow',[
+            'taxes' => $taxes,
             'product' => $product,
             'currency' => $currency,
             'canLogin' => \Illuminate\Support\Facades\Route::has('login'),

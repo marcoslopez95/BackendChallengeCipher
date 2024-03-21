@@ -9,6 +9,7 @@ import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import PhotoIcon from '@/Icons/PhotoIcon.vue'
 import { ref } from 'vue'
+import SelectComponent from '@/Components/SelectComponent.vue'
 
 const props = defineProps({
     product: {
@@ -143,6 +144,9 @@ const uploadFile = (e) => {
                                     />
                                 </div>
                                 <div class="col-span-3 flex">
+                                    <SelectComponent />
+                                </div>
+                                <div class="col-span-2 flex">
                                     <div class="mx-auto">
                                         <InputLabel
                                             for="image"
