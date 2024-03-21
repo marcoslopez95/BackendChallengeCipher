@@ -1,5 +1,7 @@
 <template>
-    <table class="w-full">
+    <div class="overflow-x-auto">
+
+    <table class="w-full ">
         <thead>
             <tr class="border-b-2">
                 <td
@@ -49,7 +51,9 @@
             </tr>
         </tbody>
     </table>
-    <Modal :show="showModal">
+</div>
+
+    <Modal :show="showModal" @close="closeModal">
         <div>
             <div class="mt-4 mb-3 text-lg text-center font-bold uppercase">
                 <div class="flex justify-center">

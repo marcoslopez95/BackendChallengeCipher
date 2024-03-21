@@ -50,6 +50,10 @@ class Currency extends Model
                 ])->first();
             if(!$currency->principal && !$principalExists){
                 $currency->principal = true;
+                $currency->saveQuietly();
+            }else{
+                $principalExists->principal = false;
+                $principalExists->saveQuietly();
             }
         };
         static::updating(function(Currency $currency) use ($verifiedExistPrincipal){

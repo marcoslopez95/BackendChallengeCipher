@@ -2,6 +2,9 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import TableComponent from '../../Components/TableComponent.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue'
+import {redirecTo} from '@/helper.js'
+import axios from 'axios'
 
 const props = defineProps({
     currencies: {
@@ -36,6 +39,24 @@ const headers = [
         value: 'principal'
     },
 ]
+
+const edit = (currency) => {
+    redirecTo(route('currencies.show',{ currency: currency.id }))
+}
+
+const create = () => redirecTo(route('currencies.create'))
+
+const destroy = async(item) => {
+    const url = route('currencies.destroy',{ currency: item.id })
+    console.log(url)
+    try{
+        const response = await axios.delete(url)
+        window.location.reload()
+    }catch(e) {
+
+    }
+
+}
 </script>
 
 <template>
@@ -43,7 +64,14 @@ const headers = [
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Monedas</h2>
+            <div class="flex justify-between">
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">Monedas</h2>
+                <div>
+                    <primary-button @click="create">
+                        Crear
+                    </primary-button>
+                </div>
+            </div>
         </template>
 
         <div class="py-12">
@@ -53,6 +81,8 @@ const headers = [
                         :headers="headers"
                         :items="currencies"
                         withActions
+                        @clickInEdit="edit"
+                        @clickInDelete="destroy"
                         >
                         <template #cel-principal="{ item }">
                             <div class="w-full flex justify-center " >
