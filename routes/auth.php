@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\Currency\CurrencyController;
+use App\Http\Controllers\Admin\Tax\TaxController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -60,4 +61,5 @@ Route::middleware('auth')->group(function () {
                 ->name('logout');
 
     Route::resource('currencies',CurrencyController::class);
+    Route::resource('taxes',TaxController::class);
 });
