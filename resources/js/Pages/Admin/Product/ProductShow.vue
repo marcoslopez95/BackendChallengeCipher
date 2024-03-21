@@ -7,7 +7,8 @@ import { redirecTo } from "@/helper.js";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
-import Checkbox from "@/Components/Checkbox.vue";
+import PhotoIcon from '@/Icons/PhotoIcon.vue'
+import { ref } from 'vue'
 
 const props = defineProps({
     product: {
@@ -21,7 +22,10 @@ const form = useForm({
     name: props.product?.name ?? "",
     cost: props.product?.cost ?? "",
     price: props.product?.price ?? '',
+    image: props.product?.image?.url_temp ?? ''
 });
+
+const urlImage = ref(props.product?.image?.url_temp ??'')
 
 const back = () => {
     redirecTo(route("products.index"));
@@ -29,16 +33,30 @@ const back = () => {
 
 const submit = () => {
     if (!props.product?.id) {
-        router.post(route("products.store"), form);
+        router.post(route("products.store"), form,{
+            forceFormData: true
+        });
         return;
     }
-    router.put(
+    router.post(
         route("products.update", {
             product: props.product.id,
         }),
-        form
+        {
+            _method: 'put',
+            ...form
+        }
     );
 };
+
+const uploadFile = (e) => {
+
+    const files = e.target.files
+    if(files.length == 0) return
+
+    urlImage.value = URL.createObjectURL(files[0])
+    form.image = files[0]
+}
 </script>
 
 <template>
@@ -55,7 +73,6 @@ const submit = () => {
                 </div>
             </div>
         </template>
-
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -124,6 +141,38 @@ const submit = () => {
                                         class="mt-2"
                                         :message="errors.price"
                                     />
+                                </div>
+                                <div class="col-span-3 flex">
+                                    <div class="mx-auto">
+                                        <InputLabel
+                                            for="image"
+                                            value="Imagen"
+                                            class="text-center"
+                                        />
+                                        <label for="image">
+                                            <i v-if="!urlImage">
+                                                <PhotoIcon class="w-32 h-32  mx-auto"/>
+                                            </i>
+                                            <img
+                                                v-else
+                                                :src="urlImage"
+                                                class="w-32 h-32 mx-auto"
+                                                />
+                                        </label>
+
+                                        <input
+                                            id="image"
+                                            type="file"
+                                            class="hidden"
+                                            @change="uploadFile"
+
+                                        />
+
+                                        <InputError
+                                            class="mt-2"
+                                            :message="errors.image"
+                                        />
+                                    </div>
                                 </div>
                                 <div class="col-span-3 text-right">
                                     <primary-button> Guardar </primary-button>

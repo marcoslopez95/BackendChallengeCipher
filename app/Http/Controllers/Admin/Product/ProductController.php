@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\ProductRequest;
 use App\Models\Product;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class ProductController extends Controller
@@ -35,6 +36,7 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
+        DB::beginTransaction();
         try{
             $product = Product::create($request->only([
                 'name',
@@ -42,9 +44,14 @@ class ProductController extends Controller
                 'price',
             ]));
 
+            $product->upload(
+                $request->image,
+                $product->id
+            );
+            DB::commit();
             return to_route('products.index');
         }catch(Exception $e){
-            // dd($e->getMessage());
+            DB::rollBack();
             return back()->withErrors([
                 'error' => $e->getMessage(),
             ]);
@@ -56,6 +63,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        $product->load('image');
         return Inertia::render('Admin/Product/ProductShow',[
             'product' => $product
         ]);
@@ -74,6 +82,7 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, Product $product)
     {
+        DB::beginTransaction();
         try{
             $product->update($request->only([
                 'name',
@@ -81,8 +90,19 @@ class ProductController extends Controller
                 'price',
             ]));
 
+            if($request->hasFile('image')){
+                $product->deleteFile($product->image->path);
+                $product->image->delete();
+                $product->upload(
+                    $request->image,
+                    $product->id
+                );
+            }
+
+            DB::commit();
             return to_route('products.index');
         }catch(Exception $e){
+            DB::rollBack();
             // dd($e->getMessage());
             return back()->withErrors([
                 'error' => $e->getMessage(),
@@ -95,12 +115,21 @@ class ProductController extends Controller
      */
     public function destroy(string $product)
     {
-        $product = Product::withTrashed()->find($product);
+        DB::beginTransaction();
+        try{
+            $product = Product::withTrashed()->find($product);
 
-        $product->trashed()
-        ? $product->restore()
-        : $product->delete();
+            $product->trashed()
+            ? $product->restore()
+            : $product->delete();
+            DB::commit();
 
-        return response()->noContent();
+            return response()->noContent();
+        }catch(Exception $e){
+            DB::rollBack();
+            return back()->withErrors([
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }

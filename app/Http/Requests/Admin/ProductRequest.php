@@ -26,11 +26,13 @@ class ProductRequest extends FormRequest
             'name' => 'required|string|unique:products,name',
             'cost' => 'required|numeric|min:0',
             'price' => 'required|numeric|min:0',
+            'image' => 'required|image',
         ];
 
         if($this->isMethod('PUT'))
         {
             $rules['name'] .= ',' . $this->product->id;
+            $rules['image'] = 'nullable|image';
         }
 
         return $rules;

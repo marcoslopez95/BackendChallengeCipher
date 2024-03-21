@@ -2,14 +2,21 @@
 
 namespace App\Models;
 
+use App\Trait\UploadFile;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use UploadFile;
+
+    protected $basePathImageable = 'product';
+    protected $relatiunshipImageable = 'image' ;
 
     protected $fillable = [
         'name',
@@ -23,5 +30,10 @@ class Product extends Model
             'cost' => 'decimal:2',
             'price' => 'decimal:2',
         ];
+    }
+
+    public function image(): MorphOne
+    {
+        return $this->morphOne(Image::class,'imageable');
     }
 }

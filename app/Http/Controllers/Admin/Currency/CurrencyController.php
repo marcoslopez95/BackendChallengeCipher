@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\CurrencyRequest;
 use App\Models\Currency;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class CurrencyController extends Controller
@@ -35,6 +36,7 @@ class CurrencyController extends Controller
      */
     public function store(CurrencyRequest $request)
     {
+        DB::beginTransaction();
         try{
             $currency = Currency::create($request->only([
                 'name',
@@ -44,8 +46,10 @@ class CurrencyController extends Controller
                 'principal',
             ]));
 
+            DB::commit();
             return to_route('currencies.index');
         }catch(Exception $e){
+            DB::rollBack();
             return back()->withErrors([
                 'error' => $e->getMessage(),
             ]);
@@ -75,6 +79,7 @@ class CurrencyController extends Controller
      */
     public function update(CurrencyRequest $request, Currency $currency)
     {
+        DB::beginTransaction();
         try{
             $currency->update($request->only([
                 'name',
@@ -84,8 +89,10 @@ class CurrencyController extends Controller
                 'principal',
             ]));
 
+            DB::commit();
             return to_route('currencies.index');
         }catch(Exception $e){
+            DB::rollBack();
             return back()->withErrors([
                 'error' => $e->getMessage(),
             ]);
@@ -97,12 +104,21 @@ class CurrencyController extends Controller
      */
     public function destroy(int $currency)
     {
-        $currency = Currency::withTrashed()->find($currency);
+        DB::beginTransaction();
+        try{
+            $currency = Currency::withTrashed()->find($currency);
 
-        $currency->trashed()
-        ? $currency->restore()
-        : $currency->delete();
+            $currency->trashed()
+            ? $currency->restore()
+            : $currency->delete();
+            DB::commit();
 
-        return response()->noContent();
+            return response()->noContent();
+        }catch(Exception $e){
+            DB::rollBack();
+            return back()->withErrors([
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }

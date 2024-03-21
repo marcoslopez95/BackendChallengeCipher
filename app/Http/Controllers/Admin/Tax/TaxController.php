@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\TaxRequest;
 use App\Models\Tax;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class TaxController extends Controller
@@ -17,7 +18,7 @@ class TaxController extends Controller
     public function index()
     {
         $taxes = Tax::withTrashed()->get();
-        return Inertia::render('Admin/Tax/TaxView',[
+        return Inertia::render('Admin/Tax/TaxView', [
             'taxes' => $taxes
         ]);
     }
@@ -35,15 +36,18 @@ class TaxController extends Controller
      */
     public function store(TaxRequest $request)
     {
-        try{
+        DB::beginTransaction();
+        try {
             $tax = Tax::create($request->only([
                 'name',
                 'fixed',
                 'percentage',
             ]));
+            DB::commit();
 
             return to_route('taxes.index');
-        }catch(Exception $e){
+        } catch (Exception $e) {
+            DB::rollBack();
             return back()->withErrors([
                 'error' => $e->getMessage(),
             ]);
@@ -58,7 +62,6 @@ class TaxController extends Controller
         return Inertia::render('Admin/Tax/TaxShow', [
             'tax' => $tax
         ]);
-
     }
 
     /**
@@ -74,15 +77,18 @@ class TaxController extends Controller
      */
     public function update(TaxRequest $request, Tax $tax)
     {
-        try{
+        DB::beginTransaction();
+        try {
             $tax->update($request->only([
                 'name',
                 'fixed',
                 'percentage',
             ]));
+            DB::commit();
 
             return to_route('taxes.index');
-        }catch(Exception $e){
+        } catch (Exception $e) {
+            DB::rollBack();
             return back()->withErrors([
                 'error' => $e->getMessage(),
             ]);
@@ -94,12 +100,21 @@ class TaxController extends Controller
      */
     public function destroy(string $currency)
     {
-        $tax = Tax::withTrashed()->find($currency);
+        DB::beginTransaction();
+        try {
+            $tax = Tax::withTrashed()->find($currency);
 
-        $tax->trashed()
-        ? $tax->restore()
-        : $tax->delete();
+            $tax->trashed()
+                ? $tax->restore()
+                : $tax->delete();
+            DB::commit();
 
-        return response()->noContent();
+            return response()->noContent();
+        } catch (Exception $e) {
+            DB::rollBack();
+            return back()->withErrors([
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }
