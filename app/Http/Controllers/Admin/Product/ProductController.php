@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin\Product;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ProductRequest;
+use App\Http\Resources\CurrencyResource;
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\TaxResource;
 use App\Models\Currency;
 use App\Models\Product;
 use App\Models\Tax;
@@ -22,7 +25,7 @@ class ProductController extends Controller
     {
         $products = Product::orderByDesc('id')->get();
         return Inertia::render('Admin/Product/ProductView',[
-            'products' => $products
+            'products' => ProductResource::collection($products)->ToArray(request()),
         ]);
     }
 
@@ -73,9 +76,9 @@ class ProductController extends Controller
         $product->load('image');
         $currency = Currency::getPrincipalCurrency();
         return Inertia::render('Admin/Product/ProductShow',[
-            'taxes' => $taxes,
-            'product' => $product,
-            'currency' => $currency,
+            'taxes' => TaxResource::collection($taxes)->ToArray(request()),
+            'product' => ProductResource::make($product)->ToArray(request()),
+            'currency' => CurrencyResource::make($currency)->ToArray(request()),
             'canLogin' => \Illuminate\Support\Facades\Route::has('login'),
             'canRegister' => \Illuminate\Support\Facades\Route::has('register'),
             'laravelVersion' => \Illuminate\Foundation\Application::VERSION,
@@ -93,8 +96,8 @@ class ProductController extends Controller
         $product->load('image');
         $currency = Currency::getPrincipalCurrency();
         return Inertia::render('Admin/Product/ProductEdit',[
-            'product' => $product,
-            'currency' => $currency,
+            'product' => ProductResource::make($product)->ToArray(request()),
+            'currency' => CurrencyResource::make($currency)->ToArray(request()),
         ]);
     }
 
