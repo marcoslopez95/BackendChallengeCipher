@@ -167,6 +167,8 @@ const toggleShowOptions = () => {
 };
 </script>
 
+<!-- Estilos -->
+
 <style scoped>
 .top-100 {
     top: 100%;
