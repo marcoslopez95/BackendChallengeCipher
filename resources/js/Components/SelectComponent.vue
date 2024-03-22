@@ -103,7 +103,9 @@
                                         class="flex w-full items-center p-2 pl-2 border-transparent border-l-2 relative hover:border-teal-100"
                                     >
                                         <div class="w-auto items-center flex">
-                                            <div class="mx-2 leading-6">{{ item[label] }}</div>
+                                            <div class="mx-2 leading-6">
+                                                {{ item[label] }}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -117,54 +119,53 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref, defineProps, defineEmits } from "vue";
 
 const props = defineProps({
-  items: {
-    type: Array,
-    required: true
-  },
-  label: {
-    type: String,
-    default: 'name'
-  }
+    items: {
+        type: Array,
+        required: true,
+    },
+    label: {
+        type: String,
+        default: "name",
+    },
 });
 
-const emits = defineEmits(['update:items']);
+const emits = defineEmits(["update:items"]);
 
 const showOptions = ref(false);
 const selectedItems = ref([]);
 
 const toggleSelection = (item) => {
-  if (!isSelected(item)) {
-    selectedItems.value.push(item);
-    emits('update:items', selectedItems.value);
-    removeItem(item);
-  }
+    if (!isSelected(item)) {
+        selectedItems.value.push(item);
+        emits("update:items", selectedItems.value);
+        removeItem(item);
+    }
 };
 
 const removeSelectedItem = (item) => {
-  selectedItems.value = selectedItems.value.filter(selectedItem => selectedItem !== item);
-  emits('update:items', selectedItems.value);
-  if (!props.items.includes(item)) {
-    props.items.push(item);
-  }
+    selectedItems.value = selectedItems.value.filter(
+        (selectedItem) => selectedItem !== item
+    );
+    emits("update:items", selectedItems.value);
+    if (!props.items.includes(item)) {
+        props.items.push(item);
+    }
 };
 
-const isSelected = (item) => {
-  return selectedItems.value.some(selectedItem => selectedItem === item);
-};
+const isSelected = (item) =>
+    selectedItems.value.some((selectedItem) => selectedItem === item);
 
 const removeItem = (item) => {
-  const index = props.items.findIndex(i => i === item);
-  if (index !== -1) {
-    props.items.splice(index, 1);
-  }
+    const index = props.items.findIndex((i) => i === item);
+    if (index !== -1) {
+        props.items.splice(index, 1);
+    }
 };
 
-const toggleShowOptions = () => {
-  showOptions.value = !showOptions.value;
-};
+const toggleShowOptions = () => (showOptions.value = !showOptions.value);
 </script>
 
 <!-- Estilos -->
