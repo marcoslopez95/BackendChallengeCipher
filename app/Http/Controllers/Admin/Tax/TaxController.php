@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Tax;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\TaxRequest;
+use App\Http\Resources\TaxResource;
 use App\Models\Tax;
 use Exception;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class TaxController extends Controller
     {
         $taxes = Tax::withTrashed()->get();
         return Inertia::render('Admin/Tax/TaxView', [
-            'taxes' => $taxes
+            'taxes' => TaxResource::collection($taxes)
         ]);
     }
 
@@ -60,7 +61,7 @@ class TaxController extends Controller
     public function show(Tax $tax)
     {
         return Inertia::render('Admin/Tax/TaxShow', [
-            'tax' => $tax
+            'tax' => TaxResource::make($tax)
         ]);
     }
 
