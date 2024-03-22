@@ -27,7 +27,7 @@ const props = defineProps({
         type: Object,
         default: () => {},
     },
-   
+
 });
 
 const addShoppingCard = () =>
@@ -44,7 +44,7 @@ const showMore = ref(false);
         :phpVersion="phpVersion"
         title="Welcome"
     >
-        <div class="grid gap-6 lg:grid-cols-4 lg:gap-8">
+        <div class="grid gap-6 lg:grid-cols-4 lg:gap-8 min-h-screen">
             <div class="lg:col-span-2 mx-auto">
                 <img v-if="product.image" :src="product.image.url_temp" />
                 <svg

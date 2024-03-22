@@ -38,7 +38,7 @@ const notification = computed(() => page.props.notification);
 </script>
 
 <template>
-    <AlertComponent  :type="notification?.type" :message="notification?.message ?? ''">
+    <AlertComponent v-if="notification"  :type="notification?.type" :message="notification?.message ?? ''">
     </AlertComponent>
     <Head :title="title" />
     <div class="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50">
