@@ -144,7 +144,38 @@ const uploadFile = (e) => {
                                     />
                                 </div>
                                 <div class="col-span-3 flex">
-                                    <SelectComponent />
+                                    <SelectComponent
+                                        :items="[
+                                            {
+                                                id: 1,
+                                                name: 'Python'
+                                            },
+                                            {
+                                                id: 2,
+                                                name: 'JavaScript'
+                                            },
+                                            {
+                                                id: 3,
+                                                name: 'Ruby'
+                                            },
+                                            {
+                                                id: 4,
+                                                name: 'JAVA'
+                                            },
+                                            {
+                                                id: 5,
+                                                name: 'ASP.Net'
+                                            },
+                                            {
+                                                id: 6,
+                                                name: 'C++'
+                                            },
+                                            {
+                                                id: 7,
+                                                name: 'SQL'
+                                            }
+                                        ]"
+                                    />
                                 </div>
                                 <div class="col-span-2 flex">
                                     <div class="mx-auto">
