@@ -120,7 +120,8 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits, computed } from "vue";
+import { ref, defineProps, defineEmits, computed,
+    toRefs } from "vue";
 
 const props = defineProps({
     items: {
@@ -137,6 +138,8 @@ const props = defineProps({
     },
 });
 
+const { items } = toRefs(props)
+
 const emits = defineEmits(["update:items"]);
 
 const showOptions = ref(false);
@@ -144,9 +147,12 @@ const selectedItems = ref([]);
 const searchTerm = ref("");
 
 const itemsFilters = computed(() => {
-    return props.items.filter(item =>
+    return items.value
+    .filter( item => !selectedItems.value.includes(item))
+    .filter(item =>
         item[props.label].toLowerCase().includes(searchTerm.value.toLowerCase())
-    );
+    )
+    ;
 });
 
 const toggleSelection = (item) => {
@@ -162,8 +168,8 @@ const removeSelectedItem = (item) => {
         (selectedItem) => selectedItem !== item
     );
     emits("update:items", selectedItems.value);
-    if (!props.items.includes(item)) {
-        props.items.push(item);
+    if (!items.value.includes(item)) {
+        items.value.push(item);
     }
 };
 
@@ -171,9 +177,9 @@ const isSelected = (item) =>
     selectedItems.value.some((selectedItem) => selectedItem === item);
 
 const removeItem = (item) => {
-    const index = props.items.findIndex((i) => i === item);
+    const index = items.value.findIndex((i) => i === item);
     if (index !== -1) {
-        props.items.splice(index, 1);
+        items.value.splice(index, 1);
     }
 };
 
