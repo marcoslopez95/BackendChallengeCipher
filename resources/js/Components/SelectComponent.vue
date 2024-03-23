@@ -9,7 +9,8 @@
                         <div class="flex flex-auto flex-wrap">
                             <div class="flex-1">
                                 <input
-                                    class="bg-transparent p-1 px-2 appearance-none outline-none h-full w-full text-gray-800 min-w-80 max-w-150 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block font-medium text-sm text-gray-700"
+                                v-model="searchTerm"
+                                class="bg-transparent p-1 px-2 outline-none w-full text-gray-800 min-w-80 max-w-150 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block font-medium text-sm"
                                 />
                             </div>
                             <div
@@ -94,8 +95,8 @@
                         >
                             <div class="flex flex-col w-full">
                                 <div
-                                    v-for="item in items"
-                                    :key="item.id"
+                                    v-for="(item,i) in itemsFilters"
+                                    :key="i"
                                     class="cursor-pointer w-full border-gray-100 rounded-t border-b hover:bg-teal-100"
                                     @click="toggleSelection(item)"
                                 >
@@ -119,7 +120,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from "vue";
+import { ref, defineProps, defineEmits, computed } from "vue";
 
 const props = defineProps({
     items: {
@@ -130,12 +131,23 @@ const props = defineProps({
         type: String,
         default: "name",
     },
+     multiselect: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const emits = defineEmits(["update:items"]);
 
 const showOptions = ref(false);
 const selectedItems = ref([]);
+const searchTerm = ref("");
+
+const itemsFilters = computed(() => {
+    return props.items.filter(item =>
+        item[props.label].toLowerCase().includes(searchTerm.value.toLowerCase())
+    );
+});
 
 const toggleSelection = (item) => {
     if (!isSelected(item)) {
