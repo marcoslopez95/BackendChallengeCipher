@@ -9,7 +9,8 @@
                         <div class="flex flex-auto flex-wrap">
                             <div class="flex-1">
                                 <input
-                                    class="bg-transparent p-1 px-2 appearance-none outline-none h-full w-full text-gray-800 min-w-80 max-w-150 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block font-medium text-sm text-gray-700"
+                                v-model="searchTerm"
+                                class="bg-transparent p-1 px-2 outline-none w-full text-gray-800 min-w-80 max-w-150 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block font-medium text-sm"
                                 />
                             </div>
                             <div
@@ -94,8 +95,8 @@
                         >
                             <div class="flex flex-col w-full">
                                 <div
-                                    v-for="item in items"
-                                    :key="item.id"
+                                    v-for="(item,i) in itemsFilters"
+                                    :key="i"
                                     class="cursor-pointer w-full border-gray-100 rounded-t border-b hover:bg-teal-100"
                                     @click="toggleSelection(item)"
                                 >
@@ -119,7 +120,8 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from "vue";
+import { ref, defineProps, defineEmits, computed,
+    toRefs } from "vue";
 
 const props = defineProps({
     items: {
@@ -130,12 +132,28 @@ const props = defineProps({
         type: String,
         default: "name",
     },
+     multiselect: {
+        type: Boolean,
+        default: false,
+    },
 });
+
+const { items } = toRefs(props)
 
 const emits = defineEmits(["update:items"]);
 
 const showOptions = ref(false);
 const selectedItems = ref([]);
+const searchTerm = ref("");
+
+const itemsFilters = computed(() => {
+    return items.value
+    .filter( item => !selectedItems.value.includes(item))
+    .filter(item =>
+        item[props.label].toLowerCase().includes(searchTerm.value.toLowerCase())
+    )
+    ;
+});
 
 const toggleSelection = (item) => {
     if (!isSelected(item)) {
@@ -150,8 +168,8 @@ const removeSelectedItem = (item) => {
         (selectedItem) => selectedItem !== item
     );
     emits("update:items", selectedItems.value);
-    if (!props.items.includes(item)) {
-        props.items.push(item);
+    if (!items.value.includes(item)) {
+        items.value.push(item);
     }
 };
 
@@ -159,9 +177,9 @@ const isSelected = (item) =>
     selectedItems.value.some((selectedItem) => selectedItem === item);
 
 const removeItem = (item) => {
-    const index = props.items.findIndex((i) => i === item);
+    const index = items.value.findIndex((i) => i === item);
     if (index !== -1) {
-        props.items.splice(index, 1);
+        items.value.splice(index, 1);
     }
 };
 
