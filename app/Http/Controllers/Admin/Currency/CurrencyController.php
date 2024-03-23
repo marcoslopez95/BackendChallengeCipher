@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Currency;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CurrencyRequest;
+use App\Http\Resources\CurrencyResource;
 use App\Models\Currency;
 use Exception;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class CurrencyController extends Controller
     {
         $currencies = Currency::orderByDesc('id')->get();
         return Inertia::render('Admin/Currency/CurrencyView',[
-            'currencies' => $currencies
+            'currencies' => CurrencyResource::collection($currencies)->ToArray(request()),
         ]);
     }
 
@@ -62,14 +63,14 @@ class CurrencyController extends Controller
     public function show(Currency $currency)
     {
         return Inertia::render('Admin/Currency/CurrencyShow',[
-            'currency' => $currency
+            'currency' => CurrencyResource::make($currency)->ToArray(request()),
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Currency $currency)
     {
         //
     }
@@ -106,7 +107,7 @@ class CurrencyController extends Controller
     {
         DB::beginTransaction();
         try{
-            $currency = Currency::withTrashed()->find($currency);
+            $currency = Currency::withTrashed()->where('principal', false)->find($currency);
 
             $currency->trashed()
             ? $currency->restore()
