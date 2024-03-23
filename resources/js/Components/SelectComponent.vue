@@ -138,7 +138,7 @@ const props = defineProps({
     },
 });
 
-const { items } = toRefs(props)
+// const { items } = toRefs(props)
 
 const emits = defineEmits(["update:items"]);
 
@@ -147,12 +147,14 @@ const selectedItems = ref([]);
 const searchTerm = ref("");
 
 const itemsFilters = computed(() => {
-    return items.value
-    .filter( item => !selectedItems.value.includes(item))
-    .filter(item =>
-        item[props.label].toLowerCase().includes(searchTerm.value.toLowerCase())
-    )
-    ;
+    const lowerCaseSearchTerm = searchTerm.value.toLowerCase();
+    const selectedItemsIds = selectedItems.value.map(item => item.id);
+    return props.items.filter(item => {
+        if (selectedItemsIds.includes(item.id)) {
+            return false;
+        }
+        return item[props.label].toLowerCase().includes(lowerCaseSearchTerm);
+    });
 });
 
 const toggleSelection = (item) => {
@@ -168,8 +170,8 @@ const removeSelectedItem = (item) => {
         (selectedItem) => selectedItem !== item
     );
     emits("update:items", selectedItems.value);
-    if (!items.value.includes(item)) {
-        items.value.push(item);
+    if (!props.items.includes(item)) {
+        props.items.push(item);
     }
 };
 
@@ -177,9 +179,9 @@ const isSelected = (item) =>
     selectedItems.value.some((selectedItem) => selectedItem === item);
 
 const removeItem = (item) => {
-    const index = items.value.findIndex((i) => i === item);
+    const index = props.items.findIndex((i) => i === item);
     if (index !== -1) {
-        items.value.splice(index, 1);
+        props.items.splice(index, 1);
     }
 };
 
