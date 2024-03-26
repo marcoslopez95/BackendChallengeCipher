@@ -118,4 +118,20 @@ class TaxController extends Controller
             ]);
         }
     }
+    public function multiselect()
+    {
+        $multiselect = true;
+        $showOptions = false;
+        $label = 'name';
+        $items = [
+            ['id' => 1, 'name' => 'Python'],
+            ['id' => 2, 'name' => 'Java'],
+            ['id' => 3, 'name' => 'Django'],
+            ['id' => 4, 'name' => 'Ruby'],
+            ['id' => 5, 'name' => 'HTML']
+        ];
+
+        return view('components.multiselectComponent', compact('multiselect', 'label', 'items', 'showOptions'));
+    }
+
 }

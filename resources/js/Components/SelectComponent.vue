@@ -9,49 +9,56 @@
                         <div class="flex flex-auto flex-wrap">
                             <div class="flex-1">
                                 <input
-                                v-model="searchTerm"
-                                class="bg-transparent p-1 px-2 outline-none w-full text-gray-800 min-w-80 max-w-150 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block font-medium text-sm"
+                                    v-if="!multiselect && selectedItems.length === 1"
+                                    :value="selectedItems[0][props.label]"
+                                    class="bg-transparent p-1 px-2 outline-none w-full text-gray-800 min-w-80 max-w-150 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block font-medium text-sm"
+                                />
+                                <input
+                                    v-else
+                                    v-model="searchTerm"
+                                    class="bg-transparent p-1 px-2 outline-none w-full text-gray-800 min-w-80 max-w-150 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block font-medium text-sm"
                                 />
                             </div>
-                            <div
-                                v-for="item in selectedItems"
-                                :key="item.id"
-                                class="flex justify-center items-center m-1 font-medium py-1 px-2 bg-white rounded-full text-teal-700 bg-teal-100 border border-teal-300"
-                            >
                                 <div
-                                    class="text-xs font-normal leading-none max-w-full flex-initial"
+                                    v-if="multiselect"
+                                    v-for="item in selectedItems"
+                                    :key="item.id"
+                                    class="flex justify-center items-center m-1 font-medium py-1 px-2 bg-white rounded-full text-teal-700 bg-teal-100 border border-teal-300"
                                 >
-                                    {{ item[label] }}
-                                </div>
-                                <div class="flex flex-auto flex-row-reverse">
-                                    <div @click="removeSelectedItem(item)">
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="100%"
-                                            height="100%"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                            stroke-width="2"
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            class="feather feather-x cursor-pointer hover:text-teal-400 rounded-full w-4 h-4 ml-2"
-                                        >
-                                            <line
-                                                x1="18"
-                                                y1="6"
-                                                x2="6"
-                                                y2="18"
-                                            ></line>
-                                            <line
-                                                x1="6"
-                                                y1="6"
-                                                x2="18"
-                                                y2="18"
-                                            ></line>
-                                        </svg>
+                                    <div
+                                        class="text-xs font-normal leading-none max-w-full flex-initial"
+                                    >
+                                        {{ item[label] }}
                                     </div>
-                                </div>
+                                    <div class="flex flex-auto flex-row-reverse">
+                                        <div @click="removeSelectedItem(item)">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="100%"
+                                                height="100%"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                                stroke-width="2"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                class="feather feather-x cursor-pointer hover:text-teal-400 rounded-full w-4 h-4 ml-2"
+                                            >
+                                                <line
+                                                    x1="18"
+                                                    y1="6"
+                                                    x2="6"
+                                                    y2="18"
+                                                ></line>
+                                                <line
+                                                    x1="6"
+                                                    y1="6"
+                                                    x2="18"
+                                                    y2="18"
+                                                ></line>
+                                            </svg>
+                                        </div>
+                                    </div>
                             </div>
                         </div>
                         <button
@@ -158,11 +165,21 @@ const itemsFilters = computed(() => {
 });
 
 const toggleSelection = (item) => {
-    if (!isSelected(item)) {
-        selectedItems.value.push(item);
-        emits("update:items", selectedItems.value);
-        removeItem(item);
+    if (props.multiselect) {
+        if (!isSelected(item)) {
+            selectedItems.value.push(item);
+        } else {
+            selectedItems.value = selectedItems.value.filter(
+                (selectedItem) => selectedItem !== item
+            );
+        }
+    } else {
+        if (!isSelected(item)) {
+            selectedItems.value = [item];
+            toggleShowOptions();
+        }
     }
+    emits("update:items", selectedItems.value);
 };
 
 const removeSelectedItem = (item) => {
@@ -170,9 +187,6 @@ const removeSelectedItem = (item) => {
         (selectedItem) => selectedItem !== item
     );
     emits("update:items", selectedItems.value);
-    if (!props.items.includes(item)) {
-        props.items.push(item);
-    }
 };
 
 const isSelected = (item) =>

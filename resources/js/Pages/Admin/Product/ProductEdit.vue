@@ -175,6 +175,7 @@ const uploadFile = (e) => {
                                                 name: 'SQL'
                                             }
                                         ]"
+                                        :multiselect="true"
                                     />
                                 </div>
                                 <div class="col-span-2 flex">

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\Tax\TaxController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Foundation\Application;
@@ -18,6 +19,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('/multiselect', [TaxController::class, 'multiselect'])->name('components.multiselectComponent');
 
 
 require __DIR__.'/auth.php';
