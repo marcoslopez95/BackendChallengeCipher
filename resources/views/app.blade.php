@@ -20,6 +20,18 @@
         @inertiaHead
     </head>
     <body class="font-sans antialiased">
+      <x-multiselect-component
+      :items="[
+        ['id' => 1, 'name' => 'Python'],
+        ['id' => 2, 'name' => 'Java'],
+        ['id' => 3, 'name' => 'Django'],
+        ['id' => 4, 'name' => 'Ruby'],
+        ['id' => 5, 'name' => 'HTML']]"
+    :multiselect="true"
+
+      >
+
+      </x-multiselect-component>
         @inertia
     </body>
 </html>

@@ -10,7 +10,7 @@
                             <div class="flex-1">
                                 <input
                                     v-if="!multiselect && selectedItems.length === 1"
-                                    :value="selectedItems[0][props.label]"
+                                    v-model="searchTerm"
                                     class="bg-transparent p-1 px-2 outline-none w-full text-gray-800 min-w-80 max-w-150 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block font-medium text-sm"
                                 />
                                 <input
@@ -157,7 +157,7 @@ const itemsFilters = computed(() => {
     const lowerCaseSearchTerm = searchTerm.value.toLowerCase();
     const selectedItemsIds = selectedItems.value.map(item => item.id);
     return props.items.filter(item => {
-        if (selectedItemsIds.includes(item.id)) {
+        if (selectedItemsIds.includes(item.id) && props.multiselect) {
             return false;
         }
         return item[props.label].toLowerCase().includes(lowerCaseSearchTerm);
@@ -174,11 +174,13 @@ const toggleSelection = (item) => {
             );
         }
     } else {
+        console.log("hola")
         if (!isSelected(item)) {
             selectedItems.value = [item];
-            toggleShowOptions();
         }
+        toggleShowOptions();
     }
+    searchTerm.value = item.name
     emits("update:items", selectedItems.value);
 };
 
